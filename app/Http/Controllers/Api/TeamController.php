@@ -120,6 +120,50 @@ class TeamController extends Controller
     }
 
     /**
+     * Get team dashboard metrics.
+     */
+    public function dashboard(Request $request, Team $team): JsonResponse
+    {
+        // Check if user is member
+        if (!$request->user()->teams->contains($team->id)) {
+            return $this->errorResponse('Unauthorized', 403);
+        }
+
+        // Stats
+        $totalMeetings = $team->meetings()->count();
+        $totalTasks = \App\Models\Task::where('team_id', $team->id)->count();
+        $completedTasks = \App\Models\Task::where('team_id', $team->id)->where('status', 'completed')->count();
+        $openTasks = $totalTasks - $completedTasks;
+        
+        $activeRisks = \App\Models\RiskAlert::where('team_id', $team->id)
+            ->where('is_resolved', false)
+            ->count();
+
+        // Recent Activity
+        $recentMeetings = $team->meetings()->latest()->take(5)->get(['id', 'title', 'created_at', 'status']);
+        
+        // Upcoming Deadlines
+        $upcomingDeadlines = \App\Models\Task::where('team_id', $team->id)
+            ->whereNotNull('deadline')
+            ->where('status', '!=', 'completed')
+            ->orderBy('deadline')
+            ->take(5)
+            ->get(['id', 'title', 'deadline', 'priority']);
+
+        return $this->successResponse([
+            'stats' => [
+                'total_meetings' => $totalMeetings,
+                'total_tasks' => $totalTasks,
+                'completed_tasks' => $completedTasks,
+                'open_tasks' => $openTasks,
+                'active_risks' => $activeRisks
+            ],
+            'recent_meetings' => $recentMeetings,
+            'upcoming_deadlines' => $upcomingDeadlines
+        ]);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Request $request, Team $team): JsonResponse

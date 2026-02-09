@@ -41,11 +41,20 @@ class MeetingProcessorService
             // Fetch team members for smart assignment
             $teamMembers = $meeting->team->users()->get(['name', 'email'])->toArray();
 
+            // Ensure participants is an array
+            $participants = $meeting->participants;
+            if (is_string($participants)) {
+                $decoded = json_decode($participants, true);
+                $participants = is_array($decoded) ? $decoded : [];
+            }
+            if (!is_array($participants)) {
+                $participants = [];
+            }
+
             // Extract tasks using AI
             $aiResponse = $this->aiService->extractTasksFromTranscript(
                 $meeting->transcript,
-                $meeting->participants ?? [],
-                $teamMembers
+                $participants
             );
 
             // Handle new response structure with language detection
@@ -76,7 +85,7 @@ class MeetingProcessorService
 
             $meeting->update(['status' => 'processed']);
             DB::commit();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
             $meeting->update([
                 'status' => 'failed',

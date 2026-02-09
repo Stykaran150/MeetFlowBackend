@@ -99,7 +99,7 @@ class MeetingController extends Controller
             'transcript' => $transcript, // Use the provided or generated transcript
             'participants' => $request->participants ?? [],
             'meeting_date' => $request->meeting_date ?? null,
-            'status' => 'pending',
+            'status' => $request->status === 'draft' ? 'draft' : 'pending',
             'created_by' => $request->user()->id,
         ]);
 
@@ -138,10 +138,11 @@ class MeetingController extends Controller
         if ($meeting->status === 'processing') {
             return $this->errorResponse('Meeting is already being processed', 400);
         }
-
-        if ($meeting->status === 'processed') {
-            return $this->errorResponse('Meeting has already been processed', 400);
-        }
+        
+        // Allow re-processing for now
+        // if ($meeting->status === 'processed') {
+        //     return $this->errorResponse('Meeting has already been processed', 400);
+        // }
 
         try {
             // Dispatch job for async processing

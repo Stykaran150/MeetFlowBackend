@@ -86,6 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Teams
     Route::apiResource('teams', TeamController::class);
+    Route::get('/teams/{team}/dashboard', [TeamController::class, 'dashboard']);
     Route::post('/teams/{team}/members', [TeamController::class, 'addMember']);
 
     // Meetings
@@ -124,4 +125,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/recent-activity', [\App\Http\Controllers\Api\DashboardController::class, 'getRecentActivity']);
         Route::get('/upcoming-deadlines', [\App\Http\Controllers\Api\DashboardController::class, 'getUpcomingDeadlines']);
     });
+
+    // Drafts
+    Route::get('/drafts', [\App\Http\Controllers\Api\DraftController::class, 'index']);
 });
