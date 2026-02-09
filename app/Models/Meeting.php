@@ -16,9 +16,11 @@ class Meeting extends Model
         'title',
         'description',
         'transcript',
+        'summary',
         'participants',
         'meeting_date',
         'status',
+        'processed_at',
         'processing_error',
         'created_by',
     ];
