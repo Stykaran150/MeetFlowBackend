@@ -21,6 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Update any 'draft' status to 'pending' to avoid truncation error
+        DB::table('meetings')->where('status', 'draft')->update(['status' => 'pending']);
+
         // Revert to original enum
         DB::statement("ALTER TABLE meetings MODIFY COLUMN status ENUM('pending', 'processing', 'processed', 'failed') DEFAULT 'pending'");
     }

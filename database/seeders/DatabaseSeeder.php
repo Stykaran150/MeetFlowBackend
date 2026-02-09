@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             TasksTableSeeder::class,
             RiskAlertsTableSeeder::class,
             FollowUpMessagesTableSeeder::class,
+            DraftMeetingsSeeder::class,
+            DemoDataSeeder::class,
         ]);
     }
 }
