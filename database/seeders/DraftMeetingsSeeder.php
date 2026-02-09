@@ -32,20 +32,25 @@ class DraftMeetingsSeeder extends Seeder
 
         $this->command->info(" Creating draft meetings for User: {$user->email} and Team: {$team->name}");
 
-        // Draft 1: Empty transcript (New Project Kickoff)
+        // Draft 1: Mobile App Kickoff (Detailed)
+        $transcript1 = "Speaker 1: Welcome everyone to the mobile app kickoff.\n" .
+                       "Speaker 2: I think we should use React Native so we can reuse our web code.\n" .
+                       "Speaker 1: Good point. We need to create a new repository for the mobile repo.\n" .
+                       "Speaker 3: I will set up the repo and the CI/CD pipeline by tomorrow.\n" .
+                       "Speaker 1: Also, we need to design the login screen to match the web app.";
+
         Meeting::create([
             'team_id' => $team->id,
             'title' => 'Project Kickoff: MeetFlow Mobile App',
-            'transcript' => '', 
+            'transcript' => $transcript1, 
             'meeting_date' => now()->addDays(2),
             'status' => 'draft',
             'created_by' => $user->id,
             'participants' => json_encode(['Alice', 'Bob', 'Charlie']),
         ]);
 
-        // Draft 2: Detailed Transcript about MeetFlow AI Project
-        // Contains clear tasks for the AI to extract
-        $transcript = "Speaker 1: Let's review the progress on the MeetFlow AI dashboard.\n" .
+        // Draft 2: Detailed Transcript about MeetFlow AI Project (Backend/Frontend)
+        $transcript2 = "Speaker 1: Let's review the progress on the MeetFlow AI dashboard.\n" .
                       "Speaker 2: The backend API for task extraction is ready, but we are facing some issues with the database migrations.\n" .
                       "Speaker 1: Okay, priority one is to fix the migration for the 'status' column. It needs to include 'draft'.\n" .
                       "Speaker 2: I'll handle the migration fix by end of day today.\n" .
@@ -56,21 +61,29 @@ class DraftMeetingsSeeder extends Seeder
         Meeting::create([
             'team_id' => $team->id,
             'title' => 'MeetFlow AI Weekly Sync',
-            'transcript' => $transcript,
+            'transcript' => $transcript2,
             'meeting_date' => now()->subDays(1),
             'status' => 'draft',
             'created_by' => $user->id,
             'participants' => json_encode(['Alice', 'Bob', 'Charlie']),
         ]);
 
-        // Draft 3: Just a title
+        // Draft 3: Marketing Strategy (Detailed)
+        $transcript3 = "Speaker 1: How are we launching this product?\n" .
+                       "Speaker 2: We are planning a Product Hunt launch next month.\n" .
+                       "Speaker 1: We need to prepare the graphic assets for the Product Hunt page.\n" .
+                       "Speaker 3: I can design the banners and the logo animations.\n" .
+                       "Speaker 1: Excellent. Also, we should write a blog post about how MeetFlow AI saves time.\n" .
+                       "Speaker 2: I'll draft the blog post and share it with the team for review.";
+
         Meeting::create([
             'team_id' => $team->id,
             'title' => 'Quick Sync: Marketing Strategy',
-            'transcript' => '',
+            'transcript' => $transcript3,
             'meeting_date' => now(),
             'status' => 'draft',
             'created_by' => $user->id,
+            'participants' => json_encode(['Alice', 'Bob']),
         ]);
 
         $this->command->info('Draft meetings seeded successfully!');
